@@ -1,6 +1,6 @@
-# Open-Source 5G NR NTN Testbed — LEO
+# Open-Source 5G NR NTN Testbed (LEO)
 
-A reproducible, fully open-source **low-earth-orbit (LEO)** 5G NR Non-Terrestrial Network testbed, completing an end-to-end 3GPP Release-17 satellite attach across a full satellite pass — with propagation delay and Doppler shift tracked continuously as the satellite moves.
+A reproducible, fully open-source **low-earth-orbit (LEO)** 5G NR Non-Terrestrial Network testbed, completing an end-to-end 3GPP Release-17 satellite attach across a full satellite pass, with propagation delay and Doppler shift tracked continuously as the satellite moves.
 
 Built on **OpenAirInterface** and **Open5GS**, with the orbital channel emulated by OAI's RF simulator. No SDR hardware required.
 
@@ -27,7 +27,7 @@ Unlike GEO, where the propagation delay is constant, LEO exercises the time-vary
 | NTN timing advance | 289,095 samples | 65,626 samples | 124,034 samples |
 | Common TA drift | −46.1 µs/s | (sign change) | +41.7 µs/s |
 
-The Doppler shift **crosses zero and reverses sign** as the satellite passes from approaching to receding — orbital mechanics visible directly in protocol state. The UE recomputes its timing advance continuously to follow it.
+The Doppler shift **crosses zero and reverses sign** as the satellite passes from approaching to receding. Orbital mechanics, visible directly in protocol state. The UE recomputes its timing advance continuously to follow it.
 
 ![Live orbital tracking](results/leo_orbital_tracking.png)
 
@@ -53,9 +53,9 @@ Both scenarios run on the same binaries and the same three patches. The differen
 | Cell-specific K-offset | 478 slots | 40 slots |
 | `ta-CommonDrift` | not used | −46 µs/s (and its rate of change) |
 | SIB19 validity | 240 s | 5 s (re-read every ~2.5 s) |
-| HARQ feedback | **disabled** (Rel-17 NTN feature) | **enabled** — 38 ms RTT makes feedback practical |
+| HARQ feedback | **disabled** (Rel-17 NTN feature) | **enabled**, 38 ms RTT makes feedback practical |
 | PRACH config index | 7 | 98 |
-| NTN-aware RAR window patch | **required** | not required — RTT fits the base window |
+| NTN-aware RAR window patch | **required** | not required, RTT fits the base window |
 
 Two findings worth stating explicitly:
 
@@ -66,7 +66,7 @@ Two findings worth stating explicitly:
 
 ## Reproduce it
 
-> Prerequisites: complete the build in the [GEO repository](https://github.com/sabbir-uoulu/open-source-5g-ntn) first — OAI pinned at tag `2026.w16` with the three patches applied, and the Open5GS core deployed. Then apply the LEO configuration below.
+> Prerequisites: complete the build in the [GEO repository](https://github.com/sabbir-uoulu/open-source-5g-ntn) first. OAI pinned at tag `2026.w16` with the three patches applied, and the Open5GS core deployed. Then apply the LEO configuration below.
 
 ### 1. Core network
 
@@ -78,7 +78,7 @@ The LEO configurations in [`configs/`](./configs/) are the in-tree OAI LEO files
 
 ### 3. Run
 
-Both modems require real-time scheduling — see the GEO repo for why.
+Both modems require real-time scheduling. See the GEO repo for why.
 
 ```bash
 # gNB
@@ -115,7 +115,7 @@ docker compose -f sa-deploy.yaml logs smf | grep "UE SUPI.*IPv4"
 
 ## Known limitations
 
-- **RF simulation only** — no real radio.
+- **RF simulation only**. No real radio.
 - **Wall-clock latency does not reflect orbital delay.** The delay is modelled correctly in the sample/timing domain, which is why the timing-advance tracking and Doppler compensation work at all, but OAI's RF simulator is not real-time: it processes samples as fast as the host allows. Measured ping RTT reflects host processing, not the modelled ~14 ms round trip. This is a property of the simulator, not a configuration error.
 - **Single satellite.** The channel model instantiates one satellite with a hardcoded starting orbital phase. Multi-satellite constellations and inter-satellite handover are not yet supported (see roadmap).
 - **Simplified orbital geometry.** The model places the ground station at the pole with a non-rotating Earth and a single orbital plane. Adequate for exercising NTN timing behaviour; not a general orbital propagator.
@@ -139,24 +139,24 @@ docker compose -f sa-deploy.yaml logs smf | grep "UE SUPI.*IPv4"
 
 ## Author
 
-**Sabbir Ahmed** — Doctoral Researcher, University of Oulu, Finland.
+**Sabbir Ahmed**, Doctoral Researcher, University of Oulu, Finland.
 
 - Email: sabbiraw.ahmed@gmail.com
 - GitHub: https://github.com/sabbir-uoulu
 
 ## Consulting & collaboration
 
-I take on selected consulting work and R&D collaborations in 5G/6G NTN, O-RAN, and testbed engineering — testbed deployment and validation, custom NTN scenarios, and protocol-level debugging. Contact: sabbiraw.ahmed@gmail.com
+I take on selected consulting work and R&D collaborations in 5G/6G NTN, O-RAN, and testbed engineering: testbed deployment and validation, custom NTN scenarios, and protocol-level debugging. Contact: sabbiraw.ahmed@gmail.com
 
 ## Licensing
 
-- Documentation, diagrams, configurations: **CC-BY-4.0** — see [`LICENSE`](./LICENSE)
-- Code, scripts, automation: **MIT** — see [`LICENSE-CODE`](./LICENSE-CODE)
+- Documentation, diagrams, configurations: **CC-BY-4.0**. See [`LICENSE`](./LICENSE)
+- Code, scripts, automation: **MIT**. See [`LICENSE-CODE`](./LICENSE-CODE)
 
 ## Attribution
 
-- OpenAirInterface 5G — https://gitlab.eurecom.fr/oai/openairinterface5g — GNU OAI Public License — EURECOM
-- Open5GS — https://open5gs.org/ — AGPL-3.0 — Sukchan Lee and contributors
-- docker_open5gs — https://github.com/herlesupreeth/docker_open5gs — BSD — Supreeth Herle
+- OpenAirInterface 5G (https://gitlab.eurecom.fr/oai/openairinterface5g), GNU OAI Public License (EURECOM
+- Open5GS), https://open5gs.org/ (AGPL-3.0), Sukchan Lee and contributors
+- docker_open5gs (https://github.com/herlesupreeth/docker_open5gs), BSD, Supreeth Herle
 
 The `SAT_LEO_TRANS` channel model and the Release-17 NTN support in OAI originate from work by **Fraunhofer IIS** under the ESA 5G-GOA and 5G-LEO projects.

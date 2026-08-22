@@ -1,4 +1,4 @@
-# Lab notes — LEO NTN testbed
+# Lab notes (LEO NTN testbed)
 
 Working notes for the LEO scenario. The GEO work, including the debugging that produced
 the three OAI patches and the real-time scheduling requirement, is documented in the
@@ -56,7 +56,7 @@ at startup with `HARQ feedback enabled, num DLHARQ:32, num ULHARQ:32`.
 
 ## Configuration changes made
 
-Only the core-facing settings needed reconciling — the shipped files point at the stock
+Only the core-facing settings needed reconciling, the shipped files point at the stock
 OAI demo core.
 
 gNB (`gnb.sa.band254.u0.25prb.rfsim.ntn-leo.conf`):
@@ -88,12 +88,12 @@ LEO-specific and have no GEO equivalent.
 ```bash
 # gNB
 sudo chrt -f 80 env RFSIMULATOR=server ./ran_build/build/nr-softmodem \
-  -O ../ci-scripts/conf_files/gnb.sa.band254.u0.25prb.rfsim.ntn-leo.conf \
+  -O ./ci-scripts/conf_files/gnb.sa.band254.u0.25prb.rfsim.ntn-leo.conf \
   --rfsim --gNBs.[0].min_rxtxtime 6
 
 # UE
 sudo chrt -f 80 env RFSIMULATOR=127.0.0.1 ./ran_build/build/nr-uesoftmodem \
-  -O ../ci-scripts/conf_files/nrue.uicc.ntn-leo.conf \
+  -O ./ci-scripts/conf_files/nrue.uicc.ntn-leo.conf \
   --band 254 -C 2488400000 --CO -873500000 \
   -r 25 --numerology 0 --ssb 60 --rfsim \
   --time-sync-I 0.1 --ntn-initial-time-drift -46 \
@@ -166,7 +166,7 @@ SIB19 is re-read roughly every 2.5 s:
 [NR_RRC] val430:5 s, T430:5000 ms, sib19_timer:2500 ms
 ```
 
-against GEO's 240 s validity — the UE cannot coast on stale ephemeris in LEO.
+against GEO's 240 s validity, the UE cannot coast on stale ephemeris in LEO.
 
 ---
 
@@ -175,7 +175,7 @@ against GEO's 240 s validity — the UE cannot coast on stale ephemeris in LEO.
 **The GEO RAR-window patch is not needed at LEO.** A GEO round trip (~477 ms) exceeds the
 base `ra-ResponseWindow` maximum of 80 ms, so the window expired before the RAR could
 arrive. A LEO round trip (~14 ms) fits comfortably. The patch is still applied here and is
-harmless — it adds the K-offset, 40 slots — but this confirms it addresses a GEO-scale
+harmless (it adds the K-offset, 40 slots), but this confirms it addresses a GEO-scale
 problem specifically rather than NTN generally.
 
 **HARQ feedback is orbit-dependent.** Enabled at LEO, disabled at GEO. Worth stating,
@@ -205,8 +205,8 @@ Investigated but not yet implemented. Findings so far:
   unavailable. Handover must be triggered externally, via the telnet interface
   (`ci trigger_f1_ho`). This is a limitation, but it also means an ephemeris- or
   timing-advance-driven trigger is the natural approach rather than merely a better one.
-- OAI's own NTN handover documentation lists five candidate trigger criteria for LEO —
-  measurement, location, elevation angle, time, and timing advance — states that
+- OAI's own NTN handover documentation lists five candidate trigger criteria for LEO
+  (measurement, location, elevation angle, time, and timing advance), states that
   measurement-based triggering is inefficient for LEO, and implements none of them beyond
   a manual trigger.
 - The `SAT_LEO_TRANS` model **hardcodes the starting orbital phase** to the point where the
