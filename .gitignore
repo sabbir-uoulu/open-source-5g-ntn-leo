@@ -1,0 +1,9 @@
+external/
+*.log
+*.iqs
+.vscode/
+.idea/
+*.swp
+.DS_Store
+__pycache__/
+*.pyc
