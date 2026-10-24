@@ -10,26 +10,26 @@ Built on **OpenAirInterface** and **Open5GS**, with the orbital channel emulated
 
 ---
 
-## What works today
+## Validated capabilities
 
 A complete Release-17 LEO NTN attach against a live 5G core:
 
 **cell sync → SIB19 acquisition → 4-step RACH → RRC Setup → NAS registration → PDU session → IP connectivity**
 
-### Live orbital tracking
+### Delay and Doppler over one emulated pass
 
 Unlike GEO, where the propagation delay is constant, LEO exercises the time-varying part of the Release-17 NTN toolkit. Across a single satellite pass the testbed tracked:
 
 | Quantity | Start (rising) | Closest approach | End (receding) |
 |---|---|---|---|
-| Propagation delay | 18.8 ms | **4.2 ms** | 8.1 ms |
+| One-way delay (feeder + service link) | 18.8 ms | **4.2 ms** | 8.1 ms |
 | DL Doppler shift | +57.3 kHz | **≈ 0 (crossing)** | −51.9 kHz |
 | NTN timing advance | 289,095 samples | 65,626 samples | 124,034 samples |
 | Common TA drift | −46.1 µs/s | (sign change) | +41.7 µs/s |
 
 The Doppler shift **crosses zero and reverses sign** as the satellite passes from approaching to receding. Orbital mechanics, visible directly in protocol state. The UE recomputes its timing advance continuously to follow it.
 
-![Live orbital tracking](results/leo_orbital_tracking.png)
+![Delay and Doppler over one emulated pass](results/leo_orbital_tracking.png)
 
 The orbital channel model is active on both link directions:
 
@@ -48,7 +48,7 @@ Both scenarios run on the same binaries and the same three patches. The differen
 | | GEO | LEO |
 |---|---|---|
 | Channel model | fixed `prop_delay` | `SAT_LEO_TRANS`, 600 km circular orbit |
-| Propagation delay | constant, 238.74 ms one-way | time-varying, 18.8 → 4.2 → 8.1 ms |
+| One-way delay (feeder + service link) | constant, 238.74 ms one-way | time-varying, 18.8 → 4.2 → 8.1 ms |
 | Doppler | negligible | ±57 kHz, reverses sign |
 | Cell-specific K-offset | 478 slots | 40 slots |
 | `ta-CommonDrift` | not used | −46 µs/s (and its rate of change) |
